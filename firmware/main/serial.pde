@@ -17,13 +17,6 @@ float delta = 1.0;
 boolean autoupdate;
 boolean printmode = 0;
 
-void toggle() {
-  if (digitalRead(9) == HIGH) {
-    digitalWrite(9, LOW);
-  } else {
-    digitalWrite(9, HIGH);
-  }
-}
 
 unsigned long lastUpdateTime = 0;
 
@@ -62,7 +55,7 @@ void updateSerialInterface() {
       setP(30.0); // make sure to keep the decimal point on these values
       setI(0.0);  // make sure to keep the decimal point on these values
       setD(0.0);  // make sure to keep the decimal point on these values
-      setTargetTemp(200.0); // here too
+      setTargetTemp(106.0); // here too
     } 
     if (incomingByte == 'P') {
       setP(getP() + delta);

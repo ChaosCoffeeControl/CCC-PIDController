@@ -12,33 +12,107 @@
 // PID tuning than those from F.
 // 
 
+#include <OneWire.h>
+#define TEMP_SENSOR_PIN 7
 
-#define TEMP_SENSOR_PIN 1
+/* DS18S20 Temperature chip i/o */
+OneWire  ds(TEMP_SENSOR_PIN); 
+byte addr[8];
 
-float tcSum = 0.0;
 float latestReading = 0.0;
-int readCount = 0;
-float multiplier;
+
 void setupTempSensor() {
-  multiplier = 1.0/(1023.0) * 500.0 * 9.0 / 5.0;
+  byte i;
+  byte present = 0;
+  byte data[12];
+  
+  
+  if ( !ds.search(addr)) {
+    //Serial.print("No more addresses.\n");
+    ds.reset_search();
+    delay(250);
+    return;
+  }
+  
+  //Serial.print("R=");
+  //for( i = 0; i < 8; i++) {
+  //  Serial.print(addr[i], HEX);
+  //  Serial.print(" ");
+  //}
+
+  if ( OneWire::crc8( addr, 7) != addr[7]) {
+      Serial.print("CRC is not valid!\n");
+      return;
+  }
+  
+  if ( addr[0] != 0x10) {
+      Serial.print("Device is not a DS18S20 family device.\n");
+      return;
+  }
+  
+
 }  
 
-void updateTempSensor() {
-    tcSum += analogRead(TEMP_SENSOR_PIN); //output from AD595 to analog pin 1
-    readCount +=1;
+void convertAndPrint(int LowByte, int HighByte) {
+  int TReading, SignBit, Tc_100, Whole, Fract;
+  char buf[20];
+  TReading = (HighByte << 8) + LowByte;
+  SignBit = TReading & 0x8000;  // test most sig bit
+  if (SignBit) // negative
+  {
+    TReading = (TReading ^ 0xffff) + 1; // 2's comp
+  }
+  Tc_100 = (TReading*100/2);
+  latestReading = Tc_100/100.0;  
+  Whole = Tc_100 / 100;  // separate off the whole and fractional portions
+  Fract = Tc_100 % 100;
+  //sprintf(buf, "%c%d.%d deg C     ",SignBit ? '-' : '+', Whole, Fract < 10 ? 0 : Fract);
+  //Serial.print(buf); 
 }
 
-float getFreshTemp() { 
-      latestReading = tcSum* multiplier/readCount+32.0;
-      readCount = 0;
-      tcSum = 0.0;
-  return latestReading;
+// called continuously from the main loop. Detect when to start update.
+void updateTempSensor() {
+  byte i;
+  byte present = 0;
+  byte data[12];
+  
+  ds.reset();
+  ds.select(addr);
+  ds.write(0x44,0);         // start conversion, with parasite power on at the end
+  
+  delay(100);     // maybe 750ms is enough, maybe not
+  // we might do a ds.depower() here, but the reset will take care of it.
+  
+  present = ds.reset();
+  ds.select(addr);    
+  ds.write(0xBE);         // Read Scratchpad
 
+  //Serial.print("P=");
+  //Serial.print(present,HEX);
+  //Serial.print(" ");
+  for ( i = 0; i < 9; i++) {           // we need 9 bytes
+    data[i] = ds.read();
+    //Serial.print(data[i], HEX);
+    //Serial.print(" ");
+  }
+  //Serial.print(" CRC=");
+  //Serial.print( OneWire::crc8( data, 8), HEX);
+  
+  //Serial.print(millis()/1000);
+  //Serial.print(": ");
+  convertAndPrint(data[0], data[1]);
+  
+  //Serial.println();
+  
+}
+
+// return the last reading.
+float getFreshTemp() {   
+  return latestReading;
 }
 
 float getLastTemp() {
   return latestReading;
-
 }
 
 // END Temperature Sensor
