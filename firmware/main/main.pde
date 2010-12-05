@@ -57,8 +57,6 @@ float getTargetTemp() {
   return targetTemp;
 }
 
-
-
 void loop() {  
   // this call interprets characters from the serial port
   // its a very basic control to allow adjustment of gain values, and set temp

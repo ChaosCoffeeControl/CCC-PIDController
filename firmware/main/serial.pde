@@ -37,6 +37,7 @@ void printHelp() {
   Serial.println("g : toggle update style between human and graphing mode");
   Serial.println("R : reset/initialize PID gain values");
   Serial.println("b : print PID debug values");
+  Serial.println("a : start autotuning process");
   Serial.println("? : print help");  
   Serial.println("+/- : adjust delta by a factor of ten");
   Serial.println("P/p : up/down adjust p gain by delta");
@@ -97,6 +98,9 @@ void updateSerialInterface() {
 
       autoupdate = not autoupdate;
     }
+    if (incomingByte == 'a') {
+      runAutoTuning();
+    } 
     if (incomingByte == 'g') {
       // toggle updating
 
