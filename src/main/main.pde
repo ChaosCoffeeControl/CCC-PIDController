@@ -39,13 +39,22 @@ unsigned long lastPIDTime;  // most recent PID update time in ms
 
 void setup()
 {
-  setupPID(PGAIN_ADR, IGAIN_ADR, DGAIN_ADR ); // Send addresses to the PID module 
-  targetTemp = readFloat(ESPRESSO_TEMP_ADDRESS); // from EEPROM. load the saved value
-  lastPIDTime = millis();
+  //setupPID(PGAIN_ADR, IGAIN_ADR, DGAIN_ADR ); // Send addresses to the PID module 
+  //targetTemp = readFloat(ESPRESSO_TEMP_ADDRESS); // from EEPROM. load the saved value
+  //lastPIDTime = millis();
   // module setup calls
-  setupHeater();
+  //setupHeater();
   setupSerialInterface();
-  setupTempSensor();
+  //setupTempSensor();
+  pinMode(9, OUTPUT);
+  toggle(); // AN
+  delay(50);
+  toggle();
+  delay(100);
+  toggle(); // AN
+  delay(500);
+  toggle();
+  
 }
 
 void setTargetTemp(float t) {
@@ -58,26 +67,29 @@ float getTargetTemp() {
 }
 
 
+
 void loop()
 {  
+  Serial.println("foo");
   // this call interprets characters from the serial port
   // its a very basic control to allow adjustment of gain values, and set temp
   updateSerialInterface(); 
-  updateTempSensor();
+ 
+  //updateTempSensor();
 
   // every second, udpate the current heat control, and print out current status
 
   // This checks for rollover with millis()
-  if (millis() < lastPIDTime) {
-    lastPIDTime = 0;
-  }
-  if ((millis() - lastPIDTime) > PID_UPDATE_INTERVAL) {
-    lastPIDTime +=  PID_UPDATE_INTERVAL;
-    heatPower = updatePID(targetTemp, getFreshTemp());
-    setHeatPowerPercentage(heatPower);
+ // if (millis() < lastPIDTime) {
+ //   lastPIDTime = 0;
+ // }
+ // if ((millis() - lastPIDTime) > PID_UPDATE_INTERVAL) {
+ //   lastPIDTime +=  PID_UPDATE_INTERVAL;
+ //   heatPower = updatePID(targetTemp, getFreshTemp());
+ //   setHeatPowerPercentage(heatPower);
 
-  }  
-  updateHeater();
+ // }  
+  //updateHeater();
 
 }
 

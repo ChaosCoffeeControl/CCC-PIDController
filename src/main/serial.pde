@@ -17,13 +17,24 @@ float delta = 1.0;
 boolean autoupdate;
 boolean printmode = 0;
 
+void toggle() {
+  if (digitalRead(9) == HIGH) {
+    digitalWrite(9, LOW);
+  } else {
+    digitalWrite(9, HIGH);
+  }
+}
+
 unsigned long lastUpdateTime = 0;
+
 void setupSerialInterface()  {
-  Serial.begin(115200);
+  Serial.begin(9600);
+  Serial.flush();
   Serial.println("\nWelcome to the BBCC, the Bare Bones Coffee Controller for Arduino");
   Serial.println("Send back one or more characters to setup the controller.");
   Serial.println("If this is your initial run, please enter 'R' to Reset the EEPROM.");
   Serial.println("Enter '?' for help.  Here's to a great cup!");
+  Serial.flush();
 }
 
 void printHelp() {
@@ -44,7 +55,7 @@ void printHelp() {
 }
 
 void updateSerialInterface() {
-  while(Serial.available()){
+  while(Serial.available()>0){
 
     incomingByte = Serial.read();
     if (incomingByte == 'R') {
