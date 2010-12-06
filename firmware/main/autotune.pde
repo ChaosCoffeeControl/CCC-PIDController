@@ -20,11 +20,15 @@ void _setupAutoTuning() {
 // the process is considered steady if it changes less than 3 percent.
 bool _is_steady(unsigned long t_u, float k_u) {
   Serial.println("Checking: Are we steady?");
+  Serial.print("t_u: "); Serial.print(t_u);
   unsigned long delta_t = abs(t_u - last_t_u);
+  Serial.print("delta_t: "); Serial.println(delta_t);
+  Serial.print("k_u: "); Serial.print(k_u);
   float delta_k = abs(k_u - last_k_u);
+  Serial.print("delta_k: "); Serial.println(delta_k);
   last_t_u = t_u;
   last_k_u = k_u;
-  if ((delta_t < (0.03 * t_u)) && (delta_k < (0.03 * k_u)))
+  if ((delta_t < (0.03 * t_u)) && (delta_k < (0.03 * k_u))) 
     return true;
   else
     return false;
@@ -44,7 +48,8 @@ void printPessenPIDParameters(unsigned long t_u, float k_u) {
   Serial.print(", I = ");
   Serial.print(0.4 * t_u);
   Serial.print(", D = ");
-  Serial.print(0.15 * t_u);  
+  Serial.print(0.15 * t_u);
+    
 }
 
 void runAutoTuning() {
@@ -70,7 +75,9 @@ void runAutoTuning() {
       // now, calculate t_u and k_u
       unsigned long endtime=getTime();
       t_u=endtime - starttime;
+      
       k_u = _calc_ku(min_temp, max_temp);
+      
       steady_state = _is_steady(t_u, k_u);
       // reset runtime vars for next loop, if needed
       starttime=endtime;
@@ -81,8 +88,12 @@ void runAutoTuning() {
       _turnHeatElementOnOff(1);
     } 
     oldTemp=currentTemp;
+    Serial.print("Current temp: ");
+    Serial.print(oldTemp);
+    Serial.print(", setpoint: ");
+    Serial.println(setpoint);
     // sleep a second
-    delay(1000);
+    delay(2000);
   }
   Serial.println("We have reached a steady state with:");
   Serial.print("t_u=");
