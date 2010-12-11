@@ -139,6 +139,8 @@ void updateSerialInterface() {
 
 void printStatus() { 
   // A means for getting feedback on the current system status and controllable parameters
+  Serial.print(millis());
+  Serial.print(", ");
   Serial.print(" SET TEMP:");
   printFloat(getTargetTemp(),PRINT_PLACES_AFTER_DECIMAL);
   Serial.print(", CUR TEMP:");
