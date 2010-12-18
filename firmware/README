@@ -1,0 +1,5 @@
+
+This code uses 
+ - Peter Fleury's uart library
+ - Martin Thomas' DS18X20 library
+   http://gandalf.arubi.uni-kl.de/avr_projects/tempsensor/index.html
