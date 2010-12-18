@@ -6,7 +6,7 @@
 // All code released under
 // Creative Commons Attribution-Noncommercial-Share Alike 3.0 
 
-#define AUTO_PRINT_INTERVAL 200  // milliseconds
+#define AUTO_PRINT_INTERVAL 1000  // milliseconds
 #define MAX_DELTA  100
 #define MIN_DELTA  0.01
 #define PRINT_PLACES_AFTER_DECIMAL 2  // set to match MIN_DELTA
@@ -139,9 +139,9 @@ void updateSerialInterface() {
 
 void printStatus() { 
   // A means for getting feedback on the current system status and controllable parameters
-  Serial.print(millis());
+  Serial.print(millis()/1000);
   Serial.print(", ");
-  Serial.print(" SET TEMP:");
+  Serial.print("SET TEMP:");
   printFloat(getTargetTemp(),PRINT_PLACES_AFTER_DECIMAL);
   Serial.print(", CUR TEMP:");
   printFloat(getLastTemp(),PRINT_PLACES_AFTER_DECIMAL);
