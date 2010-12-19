@@ -288,7 +288,10 @@ _________________ = 156.25
 //---------------------------------------------------------------------------
 #elif F_CPU == 16000000
 //---------------------------------------------------------------------------
-#if TIMER_RESOLUTION == 10000
+#if TIMER_RESOLUTION == 1000
+#  define PRESCALER 0x03
+#  define TIMEROFFSET 250	// (64*250)/16MHz=1.000ms
+#elif TIMER_RESOLUTION == 10000
 #  define PRESCALER 0x05
 #  define TIMEROFFSET 156	// (1024*156)/16MHz=9.984ms
 #elif TIMER_RESOLUTION == 20000
@@ -315,7 +318,7 @@ _________________ = 156.25
 
 #define TPS	((1000000L)/(TIMER_RESOLUTION))	// Ticks Per Second.
 
-volatile int16_t TimerTicks;
+volatile uint32_t TimerTicks;
 //---------------------------------------------------------------------------
 // Using this small library is very simple.
 // At startup the hardware timer has to be enabled with the function:
@@ -326,10 +329,10 @@ void Timer0Init(void);
 // 3). Global interrupts must be enabled with sei()
 
 // If the hardware timer is running, the function:
-int8_t TimerReached(int16_t *, int16_t);
+int8_t TimerReached(uint32_t *, uint32_t);
 // returns 1 in the specified period has expired or 0 otherwise.
 
-int16_t TimerRead(void);
+uint32_t TimerRead(void);
 
 #endif  // #ifdef TIMER_H
 

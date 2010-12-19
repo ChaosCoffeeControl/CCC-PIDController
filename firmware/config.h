@@ -5,7 +5,8 @@
  * This file contains all the configuration settings needed.
  */
 
-#define TIMER_RESOLUTION 10000 // Timer has 10000µs=10ms resolution 
+#define TIMER_RESOLUTION 1000 // Timer has 1000µs=1ms resolution 
+#define BAUD 9600
 
 #endif /* CONFIG_H */
 

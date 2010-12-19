@@ -32,31 +32,35 @@
 #include "uart_addon.h"
 #include "tempsensors.c"
 #include "timer.h"
+#include "config.h"
 
-#define BAUD 9600
 
 int main( void ) {
   uint32_t currentTemp;	
-  uint16_t time;
+  uint32_t starttime;
   char s[10];
 
+  // Interrupt-sensitive initializations, before the interrupts are enabled.
   uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
   ow_set_bus(&PIND,&PORTD,&DDRD,PD7);
   Timer0Init();
   sei();
 
+  // Initialize everything else.
   uart_puts_P( NEWLINESTR "C8H10N4O2 startup." NEWLINESTR );
   initTempSensors();
 
+  starttime = TimerRead();
   for(;;) {   // main loop
-    time = TimerRead();
-    loopTempSensors();
-    currentTemp=getHighResTemperature();
-    DS18X20_format_from_maxres( currentTemp, s, 10 );
-    uart_put_longint(time);
-    uart_puts_P(" ");
-    uart_puts( s );
-    uart_puts_P(" °C" NEWLINESTR);
-    _delay_ms(1000); 
+    if (TimerReached(&starttime, 1000)) {
+      loopTempSensors();
+      currentTemp=getHighResTemperature();
+      DS18X20_format_from_maxres( currentTemp, s, 10 );
+      uart_put_longint(starttime);
+      uart_puts_P(" T:");
+      uart_puts( s );
+      uart_puts_P( NEWLINESTR );
+    }
+    //_delay_ms(1000); 
   }
 }

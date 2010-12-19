@@ -10,10 +10,9 @@ Public License as published by the Free Software Foundation.
 
 #include <avr/io.h>
 #include <avr/interrupt.h>
-//#include <avr/signal.h>
 #include "timer.h"
 
-volatile int16_t TimerTicks;
+volatile uint32_t TimerTicks;
 
 //---------------------------------------------------------------------------
 void Timer0Init(void)
@@ -36,13 +35,13 @@ counter. That's 0,03s @8Mhz.  */
 }
 
 //---------------------------------------------------------------------------
-int8_t TimerReached(int16_t *pEndTime,const int16_t Delay)
+int8_t TimerReached(uint32_t *pEndTime,const uint32_t Delay)
 /* Non Blocking Timer function. Returns 1 if "Delay" time has passed.
 Returns 0 if this amount of time has not yet passed. *pEndTime is used for
 storage of the timing period. */
 {
-  int16_t Now;
-  int16_t Diff;
+  uint32_t Now;
+  uint32_t Diff;
 
   Now=TimerRead();
   Diff=*pEndTime-Now;
@@ -65,10 +64,10 @@ storage of the timing period. */
 }
 
 //---------------------------------------------------------------------------
-int16_t TimerRead(void)
+uint32_t TimerRead(void)
 /* Atomic read of TimerTicks  */
 {
-  int16_t Result;
+  uint32_t Result;
   uint8_t InterruptState=SREG; 	// Save previous interrupt state.
 
   cli();			// And Disable Global Interrupts.
@@ -109,7 +108,7 @@ Revision List:
 2006-10-25 Added: #define TICKS_PER_SECOND in timer.h
 	Corrected error in PRESCALER & TIMER_OFFSET for 3.6864MHz.
 	Added #error PRESCALER cq TIMER_OFFSET not defined in timer.h
-2006-10-11 Changed TimerTicks from union to int16_t
+2006-10-11 Changed TimerTicks from union to uint32_t
 2006-10-06 TimerReached(), Removed: if(*pEndTime==0){*pEndTime=Now+Delay;}
 2005-10-27 Added TimerSet()
 2005-10-26 Removed all u08 etc. typedefs	   
