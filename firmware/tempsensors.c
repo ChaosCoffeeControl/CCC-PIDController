@@ -99,9 +99,9 @@ static void initTempSensors(void) {
   nSensors = search_sensors();
 #if DS18X20_VERBOSE
   for (i = 0; i < nSensors; i++ ) {
-	uart_puts_P("# in Bus :");
+	uart_puts_P("ID in Bus: ");
 	uart_put_int( (int)i + 1);
-	uart_puts_P(" : ");
+	uart_puts_P(" - ");
 	DS18X20_show_id_uart( &gSensorIDs[i][0], OW_ROMCODE_SIZE );
 	uart_puts_P( NEWLINESTR );
   }

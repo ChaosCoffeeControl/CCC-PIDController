@@ -56,7 +56,8 @@ int main( void ) {
       loopTempSensors();
       currentTemp=getHighResTemperature();
       DS18X20_format_from_maxres( currentTemp, s, 10 );
-      uart_put_longint(starttime);
+      uart_puts_P("# ");
+      uart_put_longint(starttime/1000);
       uart_puts_P(" T:");
       uart_puts( s );
       uart_puts_P( NEWLINESTR );

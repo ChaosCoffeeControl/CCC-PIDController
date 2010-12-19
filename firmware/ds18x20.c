@@ -631,11 +631,12 @@ uint8_t DS18X20_format_from_maxres( int32_t temperaturevalue, char str[], uint8_
 			temperaturevalue = ldt.quot;
 		} while ( temperaturevalue > 0 );
 
-		if ( sign ) {
-			temp[temp_loc] = '-';
-		} else {
-			temp[temp_loc] = '+';
-		}
+    // Patch MD: No need for negative numbers, skip + and -
+		//if ( sign ) {
+		//	temp[temp_loc] = '-';
+		//} else {
+		//	temp[temp_loc] = '+';
+		//}
 
 		while ( temp_loc >= 0 ) {
 			str[str_loc++] = temp[(uint8_t)temp_loc--];
