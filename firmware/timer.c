@@ -3,6 +3,7 @@ Target: AVR-GCC
 Functions for a universal timer
 
 Copyright (C) 2004 2009 Patrick Crombach Paul van der Hoeven.
+Patched 2010 Mathias Dalheimer <md@gonium.net>
 This is free software, licensed under the terms of the GNU General
 Public License as published by the Free Software Foundation.
 **********************************************/
@@ -21,12 +22,16 @@ NOT preload the Counter with the #define'd TIMEROFFSET. This introduces a
 trivial error < 1024x256 CLK_TICKS before the first overflow of the 
 counter. That's 0,03s @8Mhz.  */
 {
-#if defined (__AVR_ATtiny2313__)
+#if defined(__AVR_ATtiny2313__) || defined(__AVR_ATmega168__)
   TCCR0B = PRESCALER;
 #else
   TCCR0  = PRESCALER;
 #endif
-  TIMSK|=_BV(TOIE0);	// Enable Interrupt on overflow Timer0
+#if defined(__AVR_ATmega168__)
+  TIMSK0 |=_BV(TOIE0);	// Enable Interrupt on overflow Timer0
+#else
+  TIMSK |=_BV(TOIE0);	// Enable Interrupt on overflow Timer0
+#endif
 //  sei();		// Do this manually. (If everything else is initialized)
 }
 

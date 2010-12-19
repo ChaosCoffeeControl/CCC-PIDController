@@ -4,6 +4,7 @@ Target: AVR-GCC
 Functions for a universal timer
 
 Copyright (C) 2004 2009 Patrick Crombach Paul van der Hoeven.
+Patched 2010 Mathias Dalheimer <md@gonium.net>
 This is free software, licensed under the terms of the GNU General
 Public License as published by the Free Software Foundation.
 **********************************************/
@@ -15,6 +16,8 @@ Public License as published by the Free Software Foundation.
 #ifndef F_CPU
 #error F_CPU not defined in timer.h
 #endif
+
+#include "config.h"
 
 /*---------------------------------------------------------------------------
 PRESCALER:	0x00	Disabled.
@@ -287,7 +290,7 @@ _________________ = 156.25
 //---------------------------------------------------------------------------
 #if TIMER_RESOLUTION == 10000
 #  define PRESCALER 0x05
-#  define TIMEROFFSET 98	// (1024*98)/10MHz=10.0352ms
+#  define TIMEROFFSET 156	// (1024*156)/16MHz=9.984ms
 #elif TIMER_RESOLUTION == 20000
 #  define PRESCALER 0x05
 #  define TIMEROFFSET 195	// (1024*195)/10MHz=19.968ms
