@@ -26,42 +26,28 @@
 #include <avr/io.h>
 #include <avr/pgmspace.h>
 #include <avr/interrupt.h>
-#include <util/delay.h>
 
-#include "uart.h"
-#include "uart_addon.h"
-#include "tempsensors.c"
+#include "tempsensors.h"
 #include "timer.h"
-#include "config.h"
-
+#include "cmdline.h"
 
 int main( void ) {
-  uint32_t currentTemp;	
   uint32_t starttime;
-  char s[10];
 
   // Interrupt-sensitive initializations, before the interrupts are enabled.
-  uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
+  initCommandLine();
   ow_set_bus(&PIND,&PORTD,&DDRD,PD7);
   Timer0Init();
   sei();
 
   // Initialize everything else.
-  uart_puts_P( NEWLINESTR "C8H10N4O2 startup." NEWLINESTR );
   initTempSensors();
 
   starttime = TimerRead();
   for(;;) {   // main loop
     if (TimerReached(&starttime, 1000)) {
       loopTempSensors();
-      currentTemp=getHighResTemperature();
-      DS18X20_format_from_maxres( currentTemp, s, 10 );
-      uart_puts_P("#:");
-      uart_put_longint(starttime/1000);
-      uart_puts_P(" T:");
-      uart_puts( s );
-      uart_puts_P( NEWLINESTR );
+      loopCommandLine();
     }
-    //_delay_ms(1000); 
   }
 }

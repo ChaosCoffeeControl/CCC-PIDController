@@ -23,13 +23,13 @@
 
 #define MAXSENSORS 5
 
-static uint8_t search_sensors(void);
-static void uart_put_temp(int16_t decicelsius);
-static void uart_put_temp_maxres(int32_t tval);
-static void initTempSensors(void);
-static void loopTempSensors(void);
-static int32_t getHighResTemperature(void);
-static int16_t getTemperature(void);
+extern uint8_t search_sensors(void);
+extern void uart_put_temp(int16_t decicelsius);
+extern void uart_put_temp_maxres(int32_t tval);
+extern void initTempSensors(void);
+extern void loopTempSensors(void);
+extern int32_t getHighResTemperature(void);
+extern int16_t getTemperature(void);
 
 #endif /* TEMPSENSORS_H */
 

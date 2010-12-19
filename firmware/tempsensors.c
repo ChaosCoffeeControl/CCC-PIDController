@@ -32,13 +32,13 @@
 #include "ds18x20.h"
 
 uint8_t nSensors, i;
-int16_t decicelsius;
-int32_t temp_eminus4;
+volatile int16_t decicelsius;
+volatile int32_t temp_eminus4;
 uint8_t error;
 uint8_t gSensorIDs[MAXSENSORS][OW_ROMCODE_SIZE];
 
 
-static uint8_t search_sensors(void) {
+uint8_t search_sensors(void) {
   uint8_t i;
   uint8_t id[OW_ROMCODE_SIZE];
   uint8_t diff, nSensors;
@@ -63,7 +63,7 @@ static uint8_t search_sensors(void) {
   return nSensors;
 }
 
-static void uart_put_temp(int16_t decicelsius) {
+void uart_put_temp(int16_t decicelsius) {
   char s[10];
   uart_put_int( decicelsius );
   uart_puts_P(" deci°C, ");
@@ -72,17 +72,17 @@ static void uart_put_temp(int16_t decicelsius) {
   uart_puts_P(" °C");
 }
 
-static int16_t getTemperature(void) {
+int16_t getTemperature(void) {
   return decicelsius;
 }
 
-static int32_t getHighResTemperature(void) {
+int32_t getHighResTemperature(void) {
   return temp_eminus4;
 }
 
 #if DS18X20_MAX_RESOLUTION
 
-static void uart_put_temp_maxres(int32_t tval) {
+void uart_put_temp_maxres(int32_t tval) {
   char s[10];
 
   uart_put_longint( tval );
@@ -94,7 +94,7 @@ static void uart_put_temp_maxres(int32_t tval) {
 
 #endif /* DS18X20_MAX_RESOLUTION */
 
-static void initTempSensors(void) {
+void initTempSensors(void) {
   uart_puts_P("Searching for OneWire temperature sensors." NEWLINESTR );
   nSensors = search_sensors();
 #if DS18X20_VERBOSE
@@ -108,7 +108,7 @@ static void initTempSensors(void) {
 #endif
 }	
 
-static void loopTempSensors(void) {
+void loopTempSensors(void) {
   error = 0;
 
   if ( nSensors == 0 ) {
