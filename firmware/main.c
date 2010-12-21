@@ -29,25 +29,28 @@
 
 #include "tempsensors.h"
 #include "timer.h"
+#include "uart.h"
 #include "cmdline.h"
+#include "onewire.h"
 
 int main( void ) {
   uint32_t starttime;
 
   // Interrupt-sensitive initializations, before the interrupts are enabled.
-  initCommandLine();
-  ow_set_bus(&PIND,&PORTD,&DDRD,PD7);
+  uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
+  ow_set_bus(&OW_INPUT,&OW_PORT,&OW_DDR,OW_PIN);
   Timer0Init();
   sei();
 
   // Initialize everything else.
+  initCommandLine();
   initTempSensors();
 
   starttime = TimerRead();
   for(;;) {   // main loop
     if (TimerReached(&starttime, 1000)) {
       loopTempSensors();
-      loopCommandLine();
     }
+    loopCommandLine();
   }
 }

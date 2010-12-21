@@ -27,11 +27,22 @@
 #include "ds18x20.h"
 #include "config.h"
 
+
+uint32_t cmdline_looptime;
+int menuEnabled;
+
 void initCommandLine(void) {
-  uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
   uart_puts_P( NEWLINESTR "C8H10N4O2 startup." NEWLINESTR );
+  cmdline_looptime = TimerRead();
+  menuEnabled=0;
 }
 
+void printHelp(void) {
+  uart_puts_P("C8H10N4O2 menu" NEWLINESTR );
+  uart_puts_P("Press 'x' to leave, '?' for help" NEWLINESTR );
+  
+}
+  
 void printStatus(void) {
   uint32_t currentTemp, currentTime;	
   char s[10];
@@ -47,5 +58,28 @@ void printStatus(void) {
 }
 
 void loopCommandLine(void) {
-  printStatus();
+  // print status if we're not in the menu
+  if (! menuEnabled) {
+    if (TimerReached(&cmdline_looptime, 1000)) {
+      printStatus();
+    }
+  } 
+  // check for serial command
+  unsigned int c = uart_getc();
+  if (!(c & UART_NO_DATA)) {
+    uart_puts_P("Received: ");
+    uart_putc(c);
+    uart_puts_P( NEWLINESTR );
+    if (! menuEnabled) {
+      menuEnabled=1;
+      printHelp();
+    }
+    switch((char) c) {
+      case 'x': case 'X':  // terminates menu
+        uart_puts_P("Leaving menu." NEWLINESTR);
+        menuEnabled=0; break;
+      case '?': // show menu
+        printHelp(); break;
+    }
+  }
 }

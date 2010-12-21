@@ -27,7 +27,11 @@
 
 #define TIMER_RESOLUTION 1000 // Timer has 1000µs=1ms resolution 
 #define BAUD 9600
-
+// Onewire Bus location
+#define OW_INPUT PIND
+#define OW_PORT PORTD
+#define OW_DDR DDRD
+#define OW_PIN PD7
 
 #endif /* CONFIG_H */
 
