@@ -20,6 +20,7 @@
 #include <avr/pgmspace.h>
 
 #include "cmdline.h"
+#include "pidcontroller.h"
 #include "uart.h"
 #include "uart_addon.h"
 #include "tempsensors.h"
@@ -40,20 +41,25 @@ void initCommandLine(void) {
 void printHelp(void) {
   uart_puts_P("C8H10N4O2 menu" NEWLINESTR );
   uart_puts_P("Press 'x' to leave, '?' for help" NEWLINESTR );
-  
+  uart_puts_P(" p: print PID configuration" NEWLINESTR );
+  uart_puts_P(" r: reset PID configuration to default values" NEWLINESTR );
 }
   
 void printStatus(void) {
   uint32_t currentTemp, currentTime;	
+  uint16_t setpoint;
   char s[10];
 
-  currentTemp=getHighResTemperature();
   currentTime=TimerRead();
+  currentTemp=getHighResTemperature();
+  setpoint=getPIDSetpoint();
   uart_puts_P("#:");
   uart_put_longint(currentTime/1000);
   DS18X20_format_from_maxres( currentTemp, s, 10 );
   uart_puts_P(" T:");
   uart_puts( s );
+  uart_puts_P(" S:");
+  uart_put_float( setpoint );
   uart_puts_P( NEWLINESTR );
 }
 
@@ -78,6 +84,10 @@ void loopCommandLine(void) {
       case 'x': case 'X':  // terminates menu
         uart_puts_P("Leaving menu." NEWLINESTR);
         menuEnabled=0; break;
+      case 'p': case 'P':  // show PID values
+        printPID(); break;
+      case 'r': case 'R':  // reset PID values
+        restorePIDDefault(); break;
       case '?': // show menu
         printHelp(); break;
     }

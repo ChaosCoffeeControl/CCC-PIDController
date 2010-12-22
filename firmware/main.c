@@ -45,6 +45,7 @@ int main( void ) {
   // Initialize everything else.
   initCommandLine();
   initTempSensors();
+  initPIDController();
 
   starttime = TimerRead();
   for(;;) {   // main loop

@@ -4,6 +4,7 @@
 Title:     UART addon-library 
 Author:    Martin Thomas <eversmith@heizung-thomas.de>   
            http://www.siwawi.arubi.uni-kl.de/avr_projects
+		   Additions by Mathias Dalheimer <md@gonium.net>
 Software:  AVR-GCC 3.3/3.4, Peter Fleury's UART-Library
 ************************************************************************/
 #define NEWLINESTR "\r\n"
@@ -20,6 +21,7 @@ extern "C" {
  *
  *  @note needs Peter Fleury's UART-Library http://jump.to/fleury
  *  @author  Martin Thomas eversmith@heizung-thomas.de   
+ *  @author  Mathias Dalheimer md@gonium.net 
  */
  
 /*@{*/
@@ -37,6 +39,18 @@ extern "C" {
  */
 extern void uart_put_longint( long int i );
 
+/**
+ * @brief    Put float to ringbuffer for transmitting via UART.
+ *
+ * The float is converted to a string which is buffered by the uart 
+ * library in a circular buffer and one character at a time is transmitted 
+ * to the UART using interrupts.
+ *
+ * @param    value to transfer
+ * @return   none
+ * @see      uart_puts_p
+ */
+extern void uart_put_float( const float f );
 
 /**
  * @brief    Put unsigned long integer to ringbuffer for transmitting via UART.

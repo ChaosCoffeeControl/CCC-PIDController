@@ -30,6 +30,19 @@ void uart_put_int( const int val )
 } /* uart_puti */
 
 /*************************************************************************
+Function: uart_put_float()
+Purpose:  transmit float as ASCII to UART
+Input:    float value
+Returns:  none
+**************************************************************************/
+void uart_put_float( const float val )
+{
+	char buffer[10];
+	uart_puts( dtostrf( val, 5, 5, buffer) );
+} /* uart_puti */
+
+
+/*************************************************************************
 Function: uart_put_longint()
 Purpose:  transmit long integer as ASCII to UART
 Input:    integer value

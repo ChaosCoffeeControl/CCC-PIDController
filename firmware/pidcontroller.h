@@ -18,26 +18,15 @@
  *
  */
 
-#ifndef CONFIG_H
-#define CONFIG_H 1
+#ifndef PIDCONTROLLER_H
+#define PIDCONTROLLER_H 1
 
-/**
- * This file contains all the configuration settings needed.
- */
+extern void initPIDController(void);
+extern void loopPIDController(void);
+extern void autotunePID(void);
+extern void restorePIDDefault(void);
+extern void printPID(void);
+extern float getPIDSetpoint(void);
 
-#define TIMER_RESOLUTION 1000 // Timer has 1000µs=1ms resolution 
-#define BAUD 9600
-// Onewire Bus location
-#define OW_INPUT PIND
-#define OW_PORT PORTD
-#define OW_DDR DDRD
-#define OW_PIN PD7
-// PID default values: These lead to a small oscillation around
-// 104°C.
-#define DEFAULT_SETPOINT 104
-#define DEFAULT_P_GAIN 30
-#define DEFAULT_I_GAIN 0
-#define DEFAULT_D_GAIN 0
-
-#endif /* CONFIG_H */
+#endif /* PIDCONTROLLER_H */
 
