@@ -38,6 +38,7 @@
 #define DEFAULT_P_GAIN 30
 #define DEFAULT_I_GAIN 0
 #define DEFAULT_D_GAIN 0
+#define WINDUP_GUARD 1000
 
 #endif /* CONFIG_H */
 

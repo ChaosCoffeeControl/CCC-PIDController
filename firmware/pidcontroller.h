@@ -27,6 +27,8 @@ extern void autotunePID(void);
 extern void restorePIDDefault(void);
 extern void printPID(void);
 extern float getPIDSetpoint(void);
+extern void togglePIDDebug(void);
+extern float getPIDValue(void);
 
 #endif /* PIDCONTROLLER_H */
 

@@ -30,6 +30,7 @@ extern void initTempSensors(void);
 extern void loopTempSensors(void);
 extern int32_t getHighResTemperature(void);
 extern int16_t getTemperature(void);
+extern float getTemperatureFloat(void);
 
 #endif /* TEMPSENSORS_H */
 

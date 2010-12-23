@@ -51,6 +51,7 @@ int main( void ) {
   for(;;) {   // main loop
     if (TimerReached(&starttime, 1000)) {
       loopTempSensors();
+      loopPIDController();
     }
     loopCommandLine();
   }

@@ -43,6 +43,7 @@ void printHelp(void) {
   uart_puts_P("Press 'x' to leave, '?' for help" NEWLINESTR );
   uart_puts_P(" p: print PID configuration" NEWLINESTR );
   uart_puts_P(" r: reset PID configuration to default values" NEWLINESTR );
+  uart_puts_P(" d: toggle PID debug output" NEWLINESTR );
 }
   
 void printStatus(void) {
@@ -88,6 +89,8 @@ void loopCommandLine(void) {
         printPID(); break;
       case 'r': case 'R':  // reset PID values
         restorePIDDefault(); break;
+      case 'd': case 'D':  // print out PID debug data
+        togglePIDDebug(); break;
       case '?': // show menu
         printHelp(); break;
     }

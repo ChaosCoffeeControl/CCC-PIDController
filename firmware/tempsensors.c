@@ -81,6 +81,9 @@ int32_t getHighResTemperature(void) {
   return temp_eminus4;
 }
 
+float getTemperatureFloat(void) {
+  return (temp_eminus4/10000.0);
+}
 #if DS18X20_MAX_RESOLUTION
 
 void uart_put_temp_maxres(int32_t tval) {
