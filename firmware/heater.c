@@ -18,45 +18,46 @@
  *
  */
 
-#include <avr/version.h>
-#if __AVR_LIBC_VERSION__ < 10606UL
-#error "please update to avrlibc 1.6.6 or newer, not tested with older versions"
-#endif
-
 #include <avr/io.h>
 #include <avr/pgmspace.h>
-#include <avr/interrupt.h>
 
-#include "tempsensors.h"
-#include "timer.h"
-#include "uart.h"
-#include "cmdline.h"
-#include "onewire.h"
 #include "heater.h"
+#include "config.h"
+#include "timer.h"
 #include "pidcontroller.h"
 
-int main( void ) {
-  uint32_t starttime;
+#define OFF (0!=0) // FALSE
+#define ON  (0==0) // TRUE
 
-  // Interrupt-sensitive initializations, before the interrupts are enabled.
-  uart_init((UART_BAUD_SELECT((BAUD),F_CPU)));
-  ow_set_bus(&OW_INPUT,&OW_PORT,&OW_DDR,OW_PIN);
-  Timer0Init();
-  sei();
+uint32_t _toggle_time;
+uint8_t _heater_state;
 
-  // Initialize everything else.
-  initCommandLine();
-  initTempSensors();
-  initPIDController();
-  initHeater();
+// function prototypes
+void heater_on(void);
+void heater_off(void);
 
-  starttime = TimerRead();
-  for(;;) {   // main loop
-    if (TimerReached(&starttime, 1000)) {
-      loopTempSensors();
-      loopPIDController();
-    }
-    loopCommandLine();
-    loopHeater();
+void initHeater(void) {
+  _toggle_time = TimerRead();
+  HEATER_DDR |= (1 << HEATER_PIN);
+  heater_off();
+}
+
+void loopHeater(void) {
+  uint16_t duty_cycle=500;
+  if (TimerReached(&_toggle_time, duty_cycle)) {
+	if (_heater_state == OFF)
+	  heater_on();
+	else
+	  heater_off();
   }
+}
+
+void heater_on(void) {
+  HEATER_PORT |= (1 << HEATER_PIN);
+  _heater_state=ON;
+}
+
+void heater_off(void) {
+  HEATER_PORT &= ~ (1 << HEATER_PIN);
+  _heater_state=OFF;
 }

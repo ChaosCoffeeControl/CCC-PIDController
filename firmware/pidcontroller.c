@@ -59,7 +59,6 @@ void initPIDController(void) {
 // copied from Tim Hirzel, see
 // http://www.arduino.cc/playground/Main/BarebonesPIDForEspresso#pid
 void loopPIDController(void) {
-  float windup_guard;
   float curTemp=getTemperatureFloat();
 
   float error = _pid_data.setpoint - curTemp;
@@ -137,7 +136,9 @@ void restorePIDDefault(void) {
   // make sure the NaN values are not present any more
   _iState = 0;
   _last_temp = 0;
-  _p_term, _i_term, _d_term = 0;
+  _p_term=0;
+  _i_term=0;
+  _d_term = 0;
   _pid_value = 0; 
 }
 

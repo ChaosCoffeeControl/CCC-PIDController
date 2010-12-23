@@ -38,7 +38,7 @@ TARGET = main
 
 # List C source files here. (C dependencies are automatically generated.)
 SRC = $(TARGET).c uart.c uart_addon.c onewire.c crc8.c ds18x20.c timer.c
-SRC += cmdline.c tempsensors.c pidcontroller.c
+SRC += cmdline.c tempsensors.c pidcontroller.c heater.c
 
 
 # List Assembler source files here.

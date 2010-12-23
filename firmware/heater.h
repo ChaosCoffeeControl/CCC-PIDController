@@ -17,35 +17,11 @@
  * along with C8H10N4O2. If not, see <http://www.gnu.org/licenses/>.
  *
  */
+#ifndef HEATER_H
+#define HEATER_H 1
 
-#ifndef CONFIG_H
-#define CONFIG_H 1
+extern void initHeater(void);
+extern void loopHeater(void);
 
-/**
- * This file contains all the configuration settings needed.
- */
-
-#define TIMER_RESOLUTION 1000 // Timer has 1000µs=1ms resolution 
-#define BAUD 9600
-
-// Onewire Bus location
-#define OW_INPUT PIND
-#define OW_PORT PORTD
-#define OW_DDR DDRD
-#define OW_PIN PD7
-
-// Heater SSR location
-#define HEATER_PORT PORTB
-#define HEATER_DDR DDRB
-#define HEATER_PIN PB1
-
-// PID default values: These lead to a small oscillation around
-// 104°C.
-#define DEFAULT_SETPOINT 104
-#define DEFAULT_P_GAIN 30
-#define DEFAULT_I_GAIN 0
-#define DEFAULT_D_GAIN 0
-#define WINDUP_GUARD 1000
-
-#endif /* CONFIG_H */
+#endif /* HEATER_H */
 
