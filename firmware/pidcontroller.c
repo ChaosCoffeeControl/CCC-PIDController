@@ -56,6 +56,43 @@ void initPIDController(void) {
   ee_load();
 }
 
+float getPIDSetpoint(void) {
+  return _pid_data.setpoint;
+}
+
+void setPIDSetpoint(float new) {
+  _pid_data.setpoint=new;
+}
+
+float getPID_P(void) {
+  return _pid_data.p_gain;
+}
+
+float getPID_I(void) {
+  return _pid_data.i_gain;
+}
+
+float getPID_D(void) {
+  return _pid_data.d_gain;
+}
+
+void setPID_P(float new) {
+  _pid_data.p_gain=new;
+}
+
+void setPID_I(float new) {
+  _pid_data.i_gain=new;
+}
+
+void setPID_D(float new) {
+  _pid_data.d_gain=new;
+}
+
+void savePIDConfig(void) {
+  uart_puts_P("Writing PID controller configuration to EEPROM." NEWLINESTR);
+  ee_save();
+}
+
 // copied from Tim Hirzel, see
 // http://www.arduino.cc/playground/Main/BarebonesPIDForEspresso#pid
 void loopPIDController(void) {
@@ -112,19 +149,7 @@ void autotunePID(void) {
   uart_puts_P("Autotuning PID controller." NEWLINESTR);
 }
 
-void printPID(void) {
-  uart_puts_P("Current PID controller configuration:" NEWLINESTR);
-  uart_puts_P(" - temperature setpoint: ");
-  uart_put_float(_pid_data.setpoint);
-  uart_puts_P(NEWLINESTR);
-  uart_puts_P(" - P gain: ");
-  uart_put_float(_pid_data.p_gain);
-  uart_puts_P(", I gain: ");
-  uart_put_float(_pid_data.i_gain);
-  uart_puts_P(", D gain: ");
-  uart_put_float(_pid_data.d_gain);
-  uart_puts_P(NEWLINESTR);
-}
+
 
 void restorePIDDefault(void) {
   uart_puts_P("Writing PID controller default configuration to EEPROM." NEWLINESTR);
@@ -150,9 +175,6 @@ void ee_load(void) {
   eeprom_read_block(&_pid_data, &_ee_pid_data, sizeof(pid_t));
 }
 
-float getPIDSetpoint(void) {
-  return _pid_data.setpoint;
-}
 
 
 int16_t get_duty_cycle(void) {

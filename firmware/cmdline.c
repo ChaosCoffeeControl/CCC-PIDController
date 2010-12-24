@@ -28,9 +28,15 @@
 #include "ds18x20.h"
 #include "config.h"
 
+#define FALSE               (1!=1)
+#define TRUE                (1==1)
 
 uint32_t cmdline_looptime;
 int menuEnabled;
+float delta = 1.0;
+#define MAX_DELTA  100
+#define MIN_DELTA  0.01
+
 
 void initCommandLine(void) {
   uart_puts_P( NEWLINESTR "C8H10N4O2 startup." NEWLINESTR );
@@ -38,12 +44,24 @@ void initCommandLine(void) {
   menuEnabled=0;
 }
 
+void uart_print_delta(void) {
+  uart_puts_P("current delta: ");
+  uart_put_float(delta);
+  uart_puts_P(NEWLINESTR );
+}
+
 void printHelp(void) {
   uart_puts_P("C8H10N4O2 menu" NEWLINESTR );
   uart_puts_P("Press 'x' to leave, '?' for help" NEWLINESTR );
-  uart_puts_P(" p: print PID configuration" NEWLINESTR );
+  uart_puts_P(" b: print PID configuration" NEWLINESTR );
+  uart_puts_P(" o: toggle PID debug output" NEWLINESTR );
+  uart_puts_P(" +/-: increase/decrease adjustment delta, ");
+  uart_print_delta();
+  uart_puts_P(" p/P: increase/decrease p gain" NEWLINESTR );
+  uart_puts_P(" i/I: increase/decrease i gain" NEWLINESTR );
+  uart_puts_P(" d/D: increase/decrease d gain" NEWLINESTR );
   uart_puts_P(" r: reset PID configuration to default values" NEWLINESTR );
-  uart_puts_P(" d: toggle PID debug output" NEWLINESTR );
+  uart_puts_P(" s: save PID configuration to EEPROM" NEWLINESTR );
 }
   
 void printStatus(void) {
@@ -66,6 +84,20 @@ void printStatus(void) {
   uart_puts_P( NEWLINESTR );
 }
 
+void printPID(void) {
+  uart_puts_P("Current PID controller configuration:" NEWLINESTR);
+  uart_puts_P(" - temperature setpoint: ");
+  uart_put_float(getPIDSetpoint());
+  uart_puts_P(NEWLINESTR);
+  uart_puts_P(" - P gain: ");
+  uart_put_float(getPID_P());
+  uart_puts_P(", I gain: ");
+  uart_put_float(getPID_I());
+  uart_puts_P(", D gain: ");
+  uart_put_float(getPID_D());
+  uart_puts_P(NEWLINESTR);
+}
+
 void loopCommandLine(void) {
   // print status if we're not in the menu
   if (! menuEnabled) {
@@ -76,9 +108,6 @@ void loopCommandLine(void) {
   // check for serial command
   unsigned int c = uart_getc();
   if (!(c & UART_NO_DATA)) {
-    uart_puts_P("Received: ");
-    uart_putc(c);
-    uart_puts_P( NEWLINESTR );
     if (! menuEnabled) {
       menuEnabled=1;
       printHelp();
@@ -87,12 +116,43 @@ void loopCommandLine(void) {
       case 'x': case 'X':  // terminates menu
         uart_puts_P("Leaving menu." NEWLINESTR);
         menuEnabled=0; break;
-      case 'p': case 'P':  // show PID values
+      case 'b': case 'B':  // show PID values
         printPID(); break;
       case 'r': case 'R':  // reset PID values
         restorePIDDefault(); break;
-      case 'd': case 'D':  // print out PID debug data
+      case 'o': case 'O':  // print out PID debug data
         togglePIDDebug(); break;
+      case 'p':
+        setPID_P(getPID_P() - delta); printPID(); break;
+      case 'P':
+        setPID_P(getPID_P() + delta); printPID();break;
+      case 'i':
+        setPID_I(getPID_I() - delta); printPID(); break;
+      case 'I':
+        setPID_I(getPID_I() + delta); printPID(); break;
+      case 'd':
+        setPID_D(getPID_D() - delta); printPID(); break;
+      case 'D':
+        setPID_D(getPID_D() + delta); printPID(); break;
+      case 't':
+        setPIDSetpoint(getPIDSetpoint() - delta); printPID(); break;
+      case 'T':
+        setPIDSetpoint(getPIDSetpoint() + delta); printPID(); break;
+      case 's': case 'S':
+        savePIDConfig(); break;
+      case '+':  {// adjust delta
+          delta *= 10.0; 
+          if (delta > MAX_DELTA) delta = MAX_DELTA;
+          uart_print_delta();
+          break;
+        }
+      case '-':  {// adjust delta
+          delta /= 10.0; 
+          if (delta < MIN_DELTA) delta = MIN_DELTA;
+          uart_print_delta();
+          break;
+        }
+
       case '?': // show menu
         printHelp(); break;
     }
