@@ -52,11 +52,12 @@ int main( void ) {
 
   starttime = TimerRead();
   for(;;) {   // main loop
+    loopCommandLine();
     if (TimerReached(&starttime, 1000)) {
       loopTempSensors();
       loopPIDController();
+      updateHeater();
     }
-    loopCommandLine();
     loopHeater();
   }
 }

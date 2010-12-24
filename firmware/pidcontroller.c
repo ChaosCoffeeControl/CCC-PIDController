@@ -154,8 +154,14 @@ float getPIDSetpoint(void) {
   return _pid_data.setpoint;
 }
 
-float getPIDValue(void) {
-  return _pid_value;
+
+int16_t get_duty_cycle(void) {
+  int16_t retval=(int16_t) _pid_value;
+  if (retval > TIMER_RESOLUTION)
+    retval=TIMER_RESOLUTION;
+  if (retval < 0)
+    retval=0;
+  return retval;
 }
 
 void togglePIDDebug(void) {

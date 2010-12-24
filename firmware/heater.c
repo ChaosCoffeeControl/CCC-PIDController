@@ -24,13 +24,17 @@
 #include "heater.h"
 #include "config.h"
 #include "timer.h"
+#include "uart.h"
+#include "uart_addon.h"
 #include "pidcontroller.h"
 
 #define OFF (0!=0) // FALSE
 #define ON  (0==0) // TRUE
 
 uint32_t _toggle_time;
-uint8_t _heater_state;
+// Start with heater switched off.
+uint32_t _on_cycle=0; 
+uint32_t _off_cycle=1000; 
 
 // function prototypes
 void heater_on(void);
@@ -42,22 +46,40 @@ void initHeater(void) {
   heater_off();
 }
 
+// call directly after the PID algorithm has been updated.
+// a full cycle is always 1000ms. The heating occurs always in the first
+// phase, the heater is then switched of for the second phase of the cycle.
+void updateHeater(void) {
+  if (get_duty_cycle() > 0) {
+	_on_cycle=TimerRead();
+	_off_cycle=_on_cycle + get_duty_cycle();
+  } else {
+	_on_cycle=TimerRead();
+	_off_cycle=_on_cycle; 
+  }
+  /*uart_puts_P("UPDATE: timer: ");
+  uart_put_longint(TimerRead());
+  uart_puts_P(" on: ");
+  uart_put_longint(_on_cycle);
+  uart_puts_P(" off: ");
+  uart_put_longint(_off_cycle);
+  uart_puts_P(NEWLINESTR);*/
+}
+
+// TODO: Consider moving this to an interrupt-based routine.
 void loopHeater(void) {
-  uint16_t duty_cycle=500;
-  if (TimerReached(&_toggle_time, duty_cycle)) {
-	if (_heater_state == OFF)
-	  heater_on();
-	else
-	  heater_off();
+  uint32_t time=TimerRead();
+  if (time > _on_cycle && time < _off_cycle) {
+	heater_on();
+  } else {
+	heater_off();
   }
 }
 
 void heater_on(void) {
   HEATER_PORT |= (1 << HEATER_PIN);
-  _heater_state=ON;
 }
 
 void heater_off(void) {
   HEATER_PORT &= ~ (1 << HEATER_PIN);
-  _heater_state=OFF;
 }

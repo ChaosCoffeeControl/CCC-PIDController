@@ -61,6 +61,8 @@ void printStatus(void) {
   uart_puts( s );
   uart_puts_P(" S:");
   uart_put_float( setpoint );
+  uart_puts_P(" D:");
+  uart_put_longint( get_duty_cycle() );
   uart_puts_P( NEWLINESTR );
 }
 

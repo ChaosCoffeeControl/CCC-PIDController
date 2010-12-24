@@ -22,6 +22,7 @@
 
 extern void initHeater(void);
 extern void loopHeater(void);
+extern void updateHeater(void);
 
 #endif /* HEATER_H */
 

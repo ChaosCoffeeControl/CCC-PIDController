@@ -21,6 +21,8 @@
 #ifndef PIDCONTROLLER_H
 #define PIDCONTROLLER_H 1
 
+#include <inttypes.h>
+
 extern void initPIDController(void);
 extern void loopPIDController(void);
 extern void autotunePID(void);
@@ -28,7 +30,7 @@ extern void restorePIDDefault(void);
 extern void printPID(void);
 extern float getPIDSetpoint(void);
 extern void togglePIDDebug(void);
-extern float getPIDValue(void);
+extern int16_t get_duty_cycle(void);
 
 #endif /* PIDCONTROLLER_H */
 
