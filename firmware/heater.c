@@ -57,13 +57,13 @@ void updateHeater(void) {
 	_on_cycle=TimerRead();
 	_off_cycle=_on_cycle; 
   }
-  uart_puts_P("UPDATE: timer: ");
+  /*uart_puts_P("UPDATE: timer: ");
   uart_put_longint(TimerRead());
   uart_puts_P(" on: ");
   uart_put_longint(_on_cycle);
   uart_puts_P(" off: ");
   uart_put_longint(_off_cycle);
-  uart_puts_P(NEWLINESTR);
+  uart_puts_P(NEWLINESTR);*/
 }
 
 // TODO: Consider moving this to an interrupt-based routine.

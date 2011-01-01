@@ -29,6 +29,9 @@ NOTES:
 // remark: this is based on a pre-GPL version, no need to include the
 //         full source to end-users
 
+// Mathias DAlheimer
+// Added statements for ATMega168, ATMega328
+
 #include <avr/io.h>
 #include <avr/interrupt.h>
 // #include <avr/signal.h>
@@ -136,7 +139,8 @@ NOTES:
  #define UART0_CONTROL  UCSRB
  #define UART0_DATA     UDR
  #define UART0_UDRIE    UDRIE
-#elif defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__) || defined(__AVR_ATmega168__)
+#elif defined(__AVR_ATmega48__) || defined(__AVR_ATmega88__) \
+  || defined(__AVR_ATmega168__) || defined(__AVR_ATmega328__)
  /* ATmega with one USART */
  #define ATMEGA_USART0
  #define UART0_RECEIVE_INTERRUPT   SIG_USART_RECV

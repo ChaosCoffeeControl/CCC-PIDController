@@ -18,6 +18,7 @@
 
 # MCU name
 MCU = atmega168
+PROGRAM_MCU = atmega328p
 
 
 # Processor frequency.
@@ -203,7 +204,7 @@ AVRDUDE_WRITE_FLASH = -U flash:w:$(TARGET).hex
 # to submit bug reports.
 #AVRDUDE_VERBOSE = -v -v
 
-AVRDUDE_FLAGS = -p $(MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
+AVRDUDE_FLAGS = -p $(PROGRAM_MCU) -P $(AVRDUDE_PORT) -c $(AVRDUDE_PROGRAMMER)
 AVRDUDE_FLAGS += $(AVRDUDE_NO_VERIFY)
 AVRDUDE_FLAGS += $(AVRDUDE_VERBOSE)
 AVRDUDE_FLAGS += $(AVRDUDE_ERASE_COUNTER)
@@ -346,6 +347,10 @@ gccversion :
 program: $(TARGET).hex $(TARGET).eep
 	$(AVRDUDE) $(AVRDUDE_FLAGS) $(AVRDUDE_WRITE_FLASH) $(AVRDUDE_WRITE_EEPROM)
 
+# program the device via the arduino bootloader. avrdude accepts the
+# arduino programmer type since v5.8
+upload: $(TARGET).hex $(TARGET).eep
+	avrdude -c arduino -P /dev/cu.usbserial-A600e1gh -p m328p -b 57600 -U flash:w:$(TARGET).hex
 
 # Generate avr-gdb config/init file which does the following:
 #     define the reset signal, load the target file, connect to target, and set 
