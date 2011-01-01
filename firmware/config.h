@@ -40,8 +40,8 @@
 #define HEATER_PIN PB1
 
 // PID default values: These lead to a small oscillation around
-// 104°C.
-#define DEFAULT_SETPOINT 30
+// 103°C.
+#define DEFAULT_SETPOINT 103
 #define DEFAULT_P_GAIN 30
 #define DEFAULT_I_GAIN 0
 #define DEFAULT_D_GAIN 0
