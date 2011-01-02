@@ -19,6 +19,7 @@
 # MCU name
 MCU = atmega168
 PROGRAM_MCU = atmega328p
+PROGRAM_SERIAL_PORT = /dev/cu.usbserial-A600e1gh
 
 
 # Processor frequency.
@@ -350,8 +351,8 @@ program: $(TARGET).hex $(TARGET).eep
 # program the device via the arduino bootloader. avrdude accepts the
 # arduino programmer type since v5.8
 upload: $(TARGET).hex $(TARGET).eep
-	avrdude -c arduino -P /dev/cu.usbserial-A600e1gh -p m328p -b 57600 -U flash:w:$(TARGET).hex
-	#avrdude -c arduino -P /dev/cu.usbserial-A600e1dh -p m328p -b 57600 -U flash:w:$(TARGET).hex
+	@perl reset.pl $(PROGRAM_SERIAL_PORT)
+	$(AVRDUDE) -c stk500v1 -P $(PROGRAM_SERIAL_PORT) -p $(PROGRAM_MCU) -b 57600 -U flash:w:$(TARGET).hex
 
 # Generate avr-gdb config/init file which does the following:
 #     define the reset signal, load the target file, connect to target, and set 
