@@ -76,10 +76,11 @@ void loopHeater(void) {
   }
 }
 
+// the heater SSR is connected via a Transistor ("Basisschaltung"). Invert the signal.
 void heater_on(void) {
-  HEATER_PORT |= (1 << HEATER_PIN);
+  HEATER_PORT &= ~ (1 << HEATER_PIN);
 }
 
 void heater_off(void) {
-  HEATER_PORT &= ~ (1 << HEATER_PIN);
+  HEATER_PORT |= (1 << HEATER_PIN);
 }

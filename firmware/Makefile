@@ -18,7 +18,8 @@
 
 # MCU name
 MCU = atmega168
-PROGRAM_MCU = atmega328p
+PROGRAM_MCU = atmega168
+#PROGRAM_MCU = atmega328p
 PROGRAM_SERIAL_PORT = /dev/cu.usbserial-A600e1gh
 
 
@@ -352,7 +353,8 @@ program: $(TARGET).hex $(TARGET).eep
 # arduino programmer type since v5.8
 upload: $(TARGET).hex $(TARGET).eep
 	@perl reset.pl $(PROGRAM_SERIAL_PORT)
-	$(AVRDUDE) -c stk500v1 -P $(PROGRAM_SERIAL_PORT) -p $(PROGRAM_MCU) -b 57600 -U flash:w:$(TARGET).hex
+	$(AVRDUDE) -c stk500v1 -P $(PROGRAM_SERIAL_PORT) -p $(PROGRAM_MCU) -b 19200 -U flash:w:$(TARGET).hex
+	#$(AVRDUDE) -c stk500v1 -P $(PROGRAM_SERIAL_PORT) -p $(PROGRAM_MCU) -b 57600 -U flash:w:$(TARGET).hex
 
 # Generate avr-gdb config/init file which does the following:
 #     define the reset signal, load the target file, connect to target, and set 
