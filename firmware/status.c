@@ -2,7 +2,6 @@
 #include <avr/pgmspace.h>
 #include "status.h"
 #include "config.h"
-#include "uart.h"
 
 #define FALSE (0!=0) // FALSE
 #define TRUE  (0==0) // TRUE
@@ -10,13 +9,11 @@
 char is_on;
 
 void statusLEDOn(void){
-  uart_puts_P("StatusLED ON");
   STATUSLED_PORT |= (1 << STATUSLED_PIN);
   is_on=TRUE;
 }
 
 void statusLEDOff(void){
-  uart_puts_P("StatusLED OFF");
   STATUSLED_PORT &= ~ (1 << STATUSLED_PIN);
   is_on=FALSE;
 }
