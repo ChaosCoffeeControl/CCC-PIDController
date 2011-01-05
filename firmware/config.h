@@ -39,6 +39,12 @@
 #define HEATER_DDR DDRB
 #define HEATER_PIN PB1
 
+// Status LED location
+#define STATUSLED_PORT PORTD
+#define STATUSLED_DDR DDRD
+#define STATUSLED_PIN PD5
+
+
 // PID default values: These lead to a small oscillation around
 // 103°C.
 #define DEFAULT_SETPOINT 103
