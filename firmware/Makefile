@@ -20,7 +20,8 @@
 MCU = atmega168
 #PROGRAM_MCU = atmega168
 PROGRAM_MCU = atmega328p
-PROGRAM_SERIAL_PORT = /dev/cu.usbserial-A600e1gh
+#PROGRAM_SERIAL_PORT = /dev/cu.usbserial-A600e1gh
+PROGRAM_SERIAL_PORT = /dev/cu.usbserial-A600e1dh
 #PROGRAM_BAUDRATE = 19200
 PROGRAM_BAUDRATE = 57600
 

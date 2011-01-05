@@ -48,10 +48,16 @@
 // PID default values: These lead to a small oscillation around
 // 103°C.
 #define DEFAULT_SETPOINT 103
-#define DEFAULT_P_GAIN 30
-#define DEFAULT_I_GAIN 0
-#define DEFAULT_D_GAIN 0
+// These are safe default values.
+//#define DEFAULT_P_GAIN 30
+//#define DEFAULT_I_GAIN 0
+//#define DEFAULT_D_GAIN 0
+// These have been edited for my Silvia. YMMV.
+#define DEFAULT_P_GAIN 60
+#define DEFAULT_I_GAIN 0.48
+#define DEFAULT_D_GAIN 1800 
 #define WINDUP_GUARD 1000
+
 
 #endif /* CONFIG_H */
 
