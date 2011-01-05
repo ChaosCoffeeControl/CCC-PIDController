@@ -33,6 +33,7 @@
 #include "cmdline.h"
 #include "onewire.h"
 #include "heater.h"
+#include "status.h"
 #include "pidcontroller.h"
 
 int main( void ) {
@@ -48,6 +49,7 @@ int main( void ) {
   initCommandLine();
   initTempSensors();
   initPIDController();
+  initStatus();
   initHeater();
 
   starttime = TimerRead();
@@ -56,6 +58,7 @@ int main( void ) {
     if (TimerReached(&starttime, 1000)) {
       loopTempSensors();
       loopPIDController();
+      loopStatus();
       updateHeater();
     }
     loopHeater();
