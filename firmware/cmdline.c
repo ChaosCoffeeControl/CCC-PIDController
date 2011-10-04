@@ -60,6 +60,7 @@ void printHelp(void) {
   uart_puts_P(" p/P: increase/decrease p gain" NEWLINESTR );
   uart_puts_P(" i/I: increase/decrease i gain" NEWLINESTR );
   uart_puts_P(" d/D: increase/decrease d gain" NEWLINESTR );
+  uart_puts_P(" t/T: increase/decrease setpoint" NEWLINESTR );
   uart_puts_P(" r: reset PID configuration to default values" NEWLINESTR );
   uart_puts_P(" s: save PID configuration to EEPROM" NEWLINESTR );
 }
