@@ -107,7 +107,7 @@ PROCESS_THREAD(temperature_process, ev, data) {
 	PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 
 	// set the timer to 1 sec for use in the loop
-	etimer_set(&temperature_periodic_timer, 1*CLOCK_SECOND);
+	etimer_set(&temperature_periodic_timer, 4*CLOCK_SECOND);
 
 	//temperature_init(); // Init the Tempsensors
 	
@@ -119,5 +119,6 @@ PROCESS_THREAD(temperature_process, ev, data) {
 		}
 		etimer_reset(&temperature_periodic_timer);
 	}
+	PROCESS_PAUSE();
 	PROCESS_END();
 }

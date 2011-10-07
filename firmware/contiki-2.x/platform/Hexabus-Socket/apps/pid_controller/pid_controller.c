@@ -1,5 +1,5 @@
 /*
- * temperature.c
+ * pid_controller.c
  *
  *  Created on: 12.08.2011
  *      Author: Mathias Dalheimer
@@ -16,7 +16,6 @@
 #include "eeprom_variables.h"
 #include "dev/leds.h"
 #include "debug.h"
-#include "tempsensors.h"
 
 static struct etimer pid_controller_periodic_timer;
 
@@ -38,60 +37,6 @@ exithandler(void) {
 	PRINTF("----Socket_pid_controller_handler: Process exits.\r\n");
 }
 /*---------------------------------------------------------------------------*/
-/*
-void _update_temp_string(void) {
-  dtostrf(temperature_value, 9, 4, &temperature_string_buffer);
-}
-*//*
-void
-temperature_init(void)
-{
-  PRINTF("-- PID controller: INIT\r\n");
-  initTempSensors();
-  loopTempSensors();
-  temperature_value=getTemperatureFloat();
-  _update_temp_string();
-  // PRINTF("Current temp: %s deg C\r\n", temperature_string_buffer);
-}
-
-void
-temperature_start(void)
-{
-  PRINTF("-- Temperature: START\r\n");
-}
-
-void
-temperature_stop(void)
-{
-  PRINTF("-- Temperature: STOP\r\n");
-}
-
-void
-temperature_reset(void)
-{
-  PRINTF("-- Temperature: RESET\r\n");
-}
-
-void
-temperature_get(void)
-{
-  PRINTF("-- PID: Get value\r\n");
-  loopTempSensors();
-  temperature_value=getTemperatureFloat();
-  _update_temp_string();
-  PRINTF("Current temp: %s deg C\r\n", temperature_string_buffer);
-  // return temperature_value;
-}
-
-char*
-temperature_as_string(void)
-{
-  PRINTF("-- Temperature: Get string value\r\n");
-  return &temperature_string_buffer;
-}
-*/
-
-/*---------------------------------------------------------------------------*/
 
 PROCESS_THREAD(pid_controller_process, ev, data) {
 	PROCESS_POLLHANDLER(pollhandler());
@@ -109,9 +54,7 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 	// set the timer to 1 sec for use in the loop
 	etimer_set(&pid_controller_periodic_timer, 4*CLOCK_SECOND);
 
-	//temperature_init(); // Init the Tempsensors
-	
-	//everytime the timer event appears, get the temperature and reset the timer
+	//everytime the timer event appears, print a debug message and reset the timer
 	while(1){
 		PROCESS_WAIT_EVENT();
 		if (ev == PROCESS_EVENT_TIMER) {
