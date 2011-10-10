@@ -321,6 +321,7 @@ void initialize(void)
   }
 
   /* PID Controller */
+  restorePIDDefault();
   process_start(&pid_controller_process, NULL);
 
   /*Init Relay */
