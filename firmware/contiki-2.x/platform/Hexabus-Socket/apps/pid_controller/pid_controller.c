@@ -105,12 +105,12 @@ void restorePIDDefault(void) {
   _pid_data.d_gain=  DEFAULT_D_GAIN;
   //ee_save();
   // make sure the NaN values are not present any more
-  _iState = 1;
-  _last_temp = 200;
-  _p_term=1;
-  _i_term=1;
-  _d_term = 1;
-  _pid_value = 1; 
+  _iState =	0;
+  _last_temp =	0;
+  _p_term=	0;
+  _i_term=	0;
+  _d_term =	0;
+  _pid_value =	0; 
 }
 
 void ee_save(void) {
@@ -173,8 +173,6 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 			float curTemp=temperature_get();
 			float error = _pid_data.setpoint - curTemp;
 
-			dtostrf(error, 8, 4, &string_buffer);
-			PRINTF("e = %s\r\n", string_buffer);
 			
 			// the pTerm is the view from now, the pgain judges 
 			// how much we care about error we are this instant.
@@ -205,6 +203,11 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 			
 			// eventually, print debug line.
 			if (debug) {
+				dtostrf(error, 8, 4, &string_buffer);
+				PRINTF("e = %s", string_buffer);
+				dtostrf(_pid_value, 8, 4, &string_buffer);
+				PRINTF(", pid value = %s\r\n", string_buffer);
+
 				dtostrf(_pid_value, 9, 4, &string_buffer);
 				PRINTF(" PID: %s", string_buffer);
 				dtostrf(_p_term, 9, 4, &string_buffer);
