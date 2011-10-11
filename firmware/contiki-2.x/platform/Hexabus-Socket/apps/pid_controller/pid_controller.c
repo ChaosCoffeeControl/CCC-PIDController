@@ -18,6 +18,7 @@
 #include "debug.h"
 #include "config.h"
 #include "temperature.h"
+#include "relay.h"
 
 static struct etimer pid_controller_periodic_timer;
 
@@ -41,6 +42,8 @@ float _last_temp = 0;
 float _p_term, _i_term, _d_term = 0;
 float _pid_value = 0; 
 uint8_t debug=1;//FALSE;
+uint16_t loopcounter=0;
+int16_t pidval =0;
 
 // forward declarations
 void ee_save(void);
@@ -125,11 +128,11 @@ void ee_load(void) {
 
 int16_t get_duty_cycle(void) {
   int16_t retval=(int16_t) _pid_value;
-  if (retval > TIMER_RESOLUTION)
-    retval=TIMER_RESOLUTION;
+  if (retval > TIMER_RESOLUTION - 1)
+    retval=(TIMER_RESOLUTION - 1);
   if (retval < 0)
     retval=0;
-  return retval;
+  return retval >> 2;
 }
 
 void togglePIDDebug(void) {
@@ -162,7 +165,9 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 	PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 
 	// set the timer to 1 sec for use in the loop
-	etimer_set(&pid_controller_periodic_timer, 1*CLOCK_SECOND);
+	etimer_set(&pid_controller_periodic_timer, 0.5*CLOCK_SECOND);
+	ENABLE_RELAY_PWM();
+	PRINTF("HORST\r\n");
 	//everytime the timer event appears, print a debug message and reset the timer
 	while(1){
 		PROCESS_YIELD();
@@ -200,14 +205,27 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 
 			// the magic feedback bit
 			_pid_value = _p_term + _i_term - _d_term;
-			
+			pidval=get_duty_cycle();
+
+			if (pidval > 0){
+			//	ENABLE_RELAY_PWM();
+				SET_RELAY_PWM(255-pidval);
+			} else{
+			//	DISABLE_RELAY_PWM();
+				SET_RELAY_PWM(255);
+			}
+
 			// eventually, print debug line.
 			if (debug) {
 				dtostrf(error, 8, 4, &string_buffer);
 				PRINTF("e = %s", string_buffer);
 				dtostrf(_pid_value, 8, 4, &string_buffer);
-				PRINTF(", pid value = %s\r\n", string_buffer);
+				PRINTF(", pid value = %s", string_buffer);
+				dtostrf(_last_temp, 9, 4, &string_buffer);
+				PRINTF(", temp = %s °C", string_buffer); 
+				PRINTF(", pidval = %i", pidval); 
 
+/*
 				dtostrf(_pid_value, 9, 4, &string_buffer);
 				PRINTF(" PID: %s", string_buffer);
 				dtostrf(_p_term, 9, 4, &string_buffer);
@@ -219,9 +237,11 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 				dtostrf(_iState, 9, 4, &string_buffer);
 				PRINTF(", iS: %s", string_buffer);
 				dtostrf(_last_temp, 9, 4, &string_buffer);
-				PRINTF(", l: %s", string_buffer);
+				PRINTF(", l: %s", string_buffer); 
+*/
 				PRINTF("\r\n");
 			}
+			loopcounter++;
 		}
 	}
 	PROCESS_END();
