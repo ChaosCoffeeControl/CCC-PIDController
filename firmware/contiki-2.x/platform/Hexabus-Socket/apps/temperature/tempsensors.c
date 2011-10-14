@@ -93,7 +93,7 @@ void uart_put_temp_maxres(int32_t tval) {
   PRINTF ("%d", (int )tval );
   PRINTF(" °Ce-4, ");
   DS18X20_format_from_maxres( tval, s, 10 );
-  PRINTF( s );
+  PRINTF("%s", s );
   PRINTF(" °C");
 }
 

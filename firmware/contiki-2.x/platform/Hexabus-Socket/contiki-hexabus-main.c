@@ -316,9 +316,9 @@ void initialize(void)
   temperature_init();
   
   //Check whether there are temperature sensors connected, if so start the process.
-  if(nSensors > 0){
-    process_start(&temperature_process, NULL);
-  }
+  //if(nSensors > 0){
+  //  process_start(&temperature_process, NULL);
+  //}
 
   /* PID Controller */
   restorePIDDefault();

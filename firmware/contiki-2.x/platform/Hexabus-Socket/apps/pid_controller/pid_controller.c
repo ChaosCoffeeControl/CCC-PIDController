@@ -127,11 +127,11 @@ void ee_load(void) {
 
 
 int16_t get_duty_cycle(void) {
+  if (_pid_value > TIMER_RESOLUTION - 1)
+    _pid_value=(TIMER_RESOLUTION - 1);
+  if (_pid_value < 0)
+    _pid_value=0;
   int16_t retval=(int16_t) _pid_value;
-  if (retval > TIMER_RESOLUTION - 1)
-    retval=(TIMER_RESOLUTION - 1);
-  if (retval < 0)
-    retval=0;
   return retval >> 2;
 }
 
@@ -149,7 +149,6 @@ exithandler(void) {
 	PRINTF("----Socket_pid_controller_handler: Process exits.\r\n");
 }
 /*---------------------------------------------------------------------------*/
-
 PROCESS_THREAD(pid_controller_process, ev, data) {
 	PROCESS_POLLHANDLER(pollhandler());
 	PROCESS_EXITHANDLER(exithandler());
@@ -165,7 +164,7 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 	PROCESS_WAIT_EVENT_UNTIL(ev == PROCESS_EVENT_TIMER);
 
 	// set the timer to 1 sec for use in the loop
-	etimer_set(&pid_controller_periodic_timer, 0.5*CLOCK_SECOND);
+	etimer_set(&pid_controller_periodic_timer, 1*CLOCK_SECOND);
 	ENABLE_RELAY_PWM();
 	PRINTF("HORST\r\n");
 	//everytime the timer event appears, print a debug message and reset the timer
@@ -193,11 +192,14 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 			else if (_iState < -WINDUP_GUARD) 
 				_iState = -WINDUP_GUARD;
 			_i_term = _pid_data.i_gain * _iState;
-
+			
 			// the dTerm, the difference between the temperature now
 			//  and our last reading, indicated the "speed," 
 			// how quickly the temp is changing. (aka. Differential)
 			_d_term = (_pid_data.d_gain * (curTemp - _last_temp));
+
+			//_d_term = _d_term < -1000 ? -1000 : _d_term;
+			//_d_term = _d_term > 1000 ? 1000 : _d_term;
 
 			// now that we've use lastTemp, put the current temp in
 			// our pocket until for the next round
@@ -209,21 +211,22 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 
 			if (pidval > 0){
 			//	ENABLE_RELAY_PWM();
-				SET_RELAY_PWM(255-pidval);
+				SET_RELAY_PWM(pidval);
 			} else{
 			//	DISABLE_RELAY_PWM();
-				SET_RELAY_PWM(255);
+				SET_RELAY_PWM(0);
 			}
 
 			// eventually, print debug line.
 			if (debug) {
+				PRINTF("%i", loopcounter);
 				dtostrf(error, 8, 4, &string_buffer);
-				PRINTF("e = %s", string_buffer);
-				dtostrf(_pid_value, 8, 4, &string_buffer);
-				PRINTF(", pid value = %s", string_buffer);
+				//PRINTF("e = %s", string_buffer);
+				//dtostrf(_pid_value, 8, 4, &string_buffer);
+				//PRINTF(", pid value = %s", string_buffer);
 				dtostrf(_last_temp, 9, 4, &string_buffer);
-				PRINTF(", temp = %s °C", string_buffer); 
-				PRINTF(", pidval = %i", pidval); 
+				PRINTF(" %s", string_buffer); 
+				PRINTF(" %i", pidval); 
 
 /*
 				dtostrf(_pid_value, 9, 4, &string_buffer);
