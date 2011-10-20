@@ -131,8 +131,8 @@ int16_t get_duty_cycle(void) {
     _pid_value=(TIMER_RESOLUTION - 1);
   if (_pid_value < 0)
     _pid_value=0;
-  int16_t retval=(int16_t) _pid_value;
-  return retval >> 2;
+  int16_t duty_cycle=(int16_t) _pid_value;
+  return duty_cycle >> 2;
 }
 
 void togglePIDDebug(void) {
@@ -165,8 +165,8 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 
 	// set the timer to 1 sec for use in the loop
 	etimer_set(&pid_controller_periodic_timer, 1*CLOCK_SECOND);
-	ENABLE_RELAY_PWM();
 	PRINTF("HORST\r\n");
+	
 	//everytime the timer event appears, print a debug message and reset the timer
 	while(1){
 		PROCESS_YIELD();
@@ -198,9 +198,6 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 			// how quickly the temp is changing. (aka. Differential)
 			_d_term = (_pid_data.d_gain * (curTemp - _last_temp));
 
-			//_d_term = _d_term < -1000 ? -1000 : _d_term;
-			//_d_term = _d_term > 1000 ? 1000 : _d_term;
-
 			// now that we've use lastTemp, put the current temp in
 			// our pocket until for the next round
 			_last_temp = curTemp;
@@ -210,12 +207,12 @@ PROCESS_THREAD(pid_controller_process, ev, data) {
 			pidval=get_duty_cycle();
 
 			if (pidval > 0){
-			//	ENABLE_RELAY_PWM();
+				ENABLE_RELAY_PWM();
 				SET_RELAY_PWM(pidval);
 			} else{
-			//	DISABLE_RELAY_PWM();
+				DISABLE_RELAY_PWM();
 				SET_RELAY_PWM(0);
-			}
+			} 
 
 			// eventually, print debug line.
 			if (debug) {

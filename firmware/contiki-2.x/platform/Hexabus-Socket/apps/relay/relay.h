@@ -43,7 +43,8 @@
 // The HEXABUS-Socket hardware uses Timer/Counter0 to switch the relay
 // if a different Timer/Counter is used, change number 0 in TCCR0A, TCR0B, OCR0A to the used timer/counter
 #define SET_RELAY_TCCRxA( ) ( TCCR0A = ( 0x00 | ( 1 << WGM01 ) | ( 1 << WGM00 ))) // WGM01 & WGM00: use fast PWM
-#define SET_RELAY_TCCRxB( ) ( TCCR0B = ( 0x00 | ( 1 << CS01 ) | ( 1 << CS00 ))) // CS00-CS02: Clock Select (F_CPU/64)
+#define SET_RELAY_TCCRxB( ) ( TCCR0B = ( 0x00 | ( 1 << CS02)   | ( 0 << CS01 ) | ( 1 << CS00 ))) // CS00-CS02: Clock Select (F_CPU/1024)
+
 
 
 #if defined(__AVR_ATmega1284P__)

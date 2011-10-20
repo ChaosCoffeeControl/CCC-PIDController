@@ -79,7 +79,7 @@ temperature_get(void)
   loopTempSensors();
   temperature_value=getTemperatureFloat();
   _update_temp_string();
-  // PRINTF("Current temp: %s deg C\r\n", temperature_string_buffer);
+  //PRINTF("Current temp: %s deg C\r\n", temperature_string_buffer);
   return temperature_value;
 }
 
